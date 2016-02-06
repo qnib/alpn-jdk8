@@ -1,4 +1,4 @@
-FROM qnib/alpn-terminal
+FROM qnib/alpn-syslog
 
 ## Copied from: https://github.com/anapsix/docker-alpine-java/blob/master/8/jdk/Dockerfile
 # Java Version and other ENV
