@@ -1,61 +1,70 @@
 FROM qnib/alpn-rsyslog
 
-## Copied from: https://github.com/anapsix/docker-alpine-java/blob/master/8/jdk/Dockerfile
-# Java Version and other ENV
-ENV JAVA_VERSION_MAJOR=8 \
-    JAVA_VERSION_MINOR=72 \
-    JAVA_VERSION_BUILD=15 \
-    JAVA_PACKAGE=jdk \
-    JAVA_HOME=/opt/jdk \
-    PATH=${PATH}:/opt/jdk/bin \
-    LANG=C.UTF-8
+ENV LANG=C.UTF-8 \
+    JDK="8u73-b02" \
+    JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
-# do all in one step
-RUN apk upgrade --update && \
-    apk add --update curl ca-certificates bash && \
-    curl -L -o /tmp/glibc-2.21-r2.apk "https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-2.21-r2.apk" && \
-    apk add --allow-untrusted /tmp/glibc-2.21-r2.apk && \
-    curl -L -o /tmp/glibc-bin-2.21-r2.apk "https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-bin-2.21-r2.apk" && \
-    apk add --allow-untrusted /tmp/glibc-bin-2.21-r2.apk && \
-    /usr/glibc/usr/bin/ldconfig /lib /usr/glibc/usr/lib && \
-    curl -jksSLH "Cookie: oraclelicense=accept-securebackup-cookie" -o /tmp/java.tar.gz \
-    http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz && \
-    gunzip /tmp/java.tar.gz && \
-    tar -C /opt -xf /tmp/java.tar && \
-    apk del curl && \
-    ln -s /opt/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR} /opt/jdk && \
-    rm -rf /opt/jdk/*src.zip \
-           /opt/jdk/lib/missioncontrol \
-           /opt/jdk/lib/visualvm \
-           /opt/jdk/lib/*javafx* \
-           /opt/jdk/jre/plugin \
-           /opt/jdk/jre/bin/javaws \
-           /opt/jdk/jre/bin/jjs \
-           /opt/jdk/jre/bin/keytool \
-           /opt/jdk/jre/bin/orbd \
-           /opt/jdk/jre/bin/pack200 \
-           /opt/jdk/jre/bin/policytool \
-           /opt/jdk/jre/bin/rmid \
-           /opt/jdk/jre/bin/rmiregistry \
-           /opt/jdk/jre/bin/servertool \
-           /opt/jdk/jre/bin/tnameserv \
-           /opt/jdk/jre/bin/unpack200 \
-           /opt/jdk/jre/lib/javaws.jar \
-           /opt/jdk/jre/lib/deploy* \
-           /opt/jdk/jre/lib/desktop \
-           /opt/jdk/jre/lib/*javafx* \
-           /opt/jdk/jre/lib/*jfx* \
-           /opt/jdk/jre/lib/jfr* \
-           /opt/jdk/jre/lib/amd64/libdecora_sse.so \
-           /opt/jdk/jre/lib/amd64/libprism_*.so \
-           /opt/jdk/jre/lib/amd64/libfxplugins.so \
-           /opt/jdk/jre/lib/amd64/libglass.so \
-           /opt/jdk/jre/lib/amd64/libgstreamer-lite.so \
-           /opt/jdk/jre/lib/amd64/libjavafx*.so \
-           /opt/jdk/jre/lib/amd64/libjfx*.so \
-           /opt/jdk/jre/lib/ext/jfxrt.jar \
-           /opt/jdk/jre/lib/ext/nashorn.jar \
-           /opt/jdk/jre/lib/oblique-fonts \
-           /opt/jdk/jre/lib/plugin.jar \
+RUN apk add --update wget ca-certificates \
+ && export URL="http://download.oracle.com/otn-pub/java/jdk/$JDK/jdk-`echo "$JDK" | sed 's@-[^-]*$@@g'`-linux-x64.tar.gz" \
+ && mkdir -p /usr/lib/jvm/java-8-oracle \
+ && cd /tmp \
+ && wget --quiet --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "$URL" \
+ && tar zxf /tmp/jdk-*-linux-x64.tar.gz -C /tmp/ \
+ && mv /tmp/jdk*/* /usr/lib/jvm/java-8-oracle/ \
+ && mkdir -p /usr/lib/jvm/java-8-oracle/jre/lib/security \
+ && rm -rf /var/cache/apk/* /tmp/* \
+           ${JAVA_HOME}/*src.zip \
+           ${JAVA_HOME}/lib/missioncontrol \
+           ${JAVA_HOME}/lib/visualvm \
+           ${JAVA_HOME}/lib/*javafx* \
+           ${JAVA_HOME}/jre/plugin \
+           ${JAVA_HOME}/jre/bin/javaws \
+           ${JAVA_HOME}/jre/bin/jjs \
+           ${JAVA_HOME}/jre/bin/keytool \
+           ${JAVA_HOME}/jre/bin/orbd \
+           ${JAVA_HOME}/jre/bin/pack200 \
+           ${JAVA_HOME}/jre/bin/policytool \
+           ${JAVA_HOME}/jre/bin/rmid \
+           ${JAVA_HOME}/jre/bin/rmiregistry \
+           ${JAVA_HOME}/jre/bin/servertool \
+           ${JAVA_HOME}/jre/bin/tnameserv \
+           ${JAVA_HOME}/jre/bin/unpack200 \
+           ${JAVA_HOME}/jre/lib/javaws.jar \
+           ${JAVA_HOME}/jre/lib/deploy* \
+           ${JAVA_HOME}/jre/lib/desktop \
+           ${JAVA_HOME}/jre/lib/*javafx* \
+           ${JAVA_HOME}/jre/lib/*jfx* \
+           ${JAVA_HOME}/jre/lib/jfr* \
+           ${JAVA_HOME}/jre/lib/amd64/libdecora_sse.so \
+           ${JAVA_HOME}/jre/lib/amd64/libprism_*.so \
+           ${JAVA_HOME}/jre/lib/amd64/libfxplugins.so \
+           ${JAVA_HOME}/jre/lib/amd64/libglass.so \
+           ${JAVA_HOME}/jre/lib/amd64/libgstreamer-lite.so \
+           ${JAVA_HOME}/jre/lib/amd64/libjavafx*.so \
+           ${JAVA_HOME}/jre/lib/amd64/libjfx*.so \
+           ${JAVA_HOME}/jre/lib/ext/jfxrt.jar \
+           ${JAVA_HOME}/jre/lib/ext/nashorn.jar \
+           ${JAVA_HOME}/jre/lib/oblique-fonts \
+           ${JAVA_HOME}/jre/lib/plugin.jar \
            /tmp/* /var/cache/apk/* && \
     echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+
+RUN POLICY_URL="http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" \
+  && POLICY_DIR="UnlimitedJCEPolicyJDK8" \
+  && wget --quiet --no-cookies --no-check-certificate \
+     --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+     "$POLICY_URL" -O /tmp/policy.zip \
+  && cd /tmp \
+  && unzip /tmp/policy.zip \
+  && mv /tmp/$POLICY_DIR/*.jar /usr/lib/jvm/java-8-oracle/jre/lib/security/ \
+  && rm -rf /tmp/*
+
+WORKDIR /data
+
+RUN cd /tmp/ \
+ && wget -qO /usr/local/bin/go-github https://github.com/qnib/go-github/releases/download/0.2.2/go-github_0.2.2_Linux \
+ && chmod +x /usr/local/bin/go-github \
+ && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-2.*.apk" |head -n1) \
+ && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-bin-2.*.apk" |head -n1) \
+ && apk add --allow-untrusted glibc-*.apk \
+ && rm -rf /usr/local/bin/go-github /tmp/glibc-*
