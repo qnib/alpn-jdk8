@@ -1,7 +1,7 @@
 FROM qnib/alpn-rsyslog
 
 ENV LANG=C.UTF-8 \
-    JDK="8u73-b02" \
+    JDK="8u72-b15" \
     JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 RUN apk add --update wget ca-certificates \
