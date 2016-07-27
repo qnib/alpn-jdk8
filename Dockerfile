@@ -62,7 +62,7 @@ RUN POLICY_URL="http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" 
 WORKDIR /data
 
 RUN cd /tmp/ \
- && wget -qO /usr/local/bin/go-github https://github.com/qnib/go-github/releases/download/0.2.2/go-github_0.2.2_Linux \
+ && wget -qO /usr/local/bin/go-github https://github.com/qnib/go-github/releases/download/0.2.2/go-github_0.2.2_MuslLinux \
  && chmod +x /usr/local/bin/go-github \
  && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-2.*.apk" |head -n1) \
  && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-bin-2.*.apk" |head -n1) \
