@@ -1,4 +1,4 @@
-FROM qnib/alpn-rsyslog
+FROM qnib/alpn-consul
 
 ARG JDK="8u72-b15"
 ENV LANG=C.UTF-8 \
