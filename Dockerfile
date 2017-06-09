@@ -65,7 +65,9 @@ WORKDIR /data
 RUN cd /tmp/ \
  && wget -qO /usr/local/bin/go-github https://github.com/qnib/go-github/releases/download/0.2.2/go-github_0.2.2_MuslLinux \
  && chmod +x /usr/local/bin/go-github \
+ && echo "# download $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex 'glibc-2.*.apk' |head -n1) "\
  && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-2.*.apk" |head -n1) \
+ && echo "# download $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex 'glibc-bin-2.*.apk' |head -n1) "\
  && wget -q $(/usr/local/bin/go-github rLatestUrl --ghorg sgerrand --ghrepo alpine-pkg-glibc --regex "glibc-bin-2.*.apk" |head -n1) \
- && apk add --allow-untrusted glibc-*.apk \
+ && apk add --no-cache --allow-untrusted glibc-*.apk \
  && rm -rf /usr/local/bin/go-github /tmp/glibc-*
