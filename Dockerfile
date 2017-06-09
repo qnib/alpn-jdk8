@@ -1,12 +1,13 @@
 FROM qnib/alpn-consul
 
-ARG JDK="8u72-b15"
+ARG JDK="8u131-b11"
+ARG JDK_HASH=d54c1d3a095b4ff2b6607d096fa80163
 ENV LANG=C.UTF-8 \
     JAVA_HOME=/usr/lib/jvm/java-8-oracle \
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/jvm/java-8-oracle/bin/
 
 RUN apk add --update wget ca-certificates \
- && export URL="http://download.oracle.com/otn-pub/java/jdk/$JDK/jdk-`echo "$JDK" | sed 's@-[^-]*$@@g'`-linux-x64.tar.gz" \
+ && export URL="http://download.oracle.com/otn-pub/java/jdk/${JDK}/${JDK_HASH}/jdk-`echo "$JDK" | sed 's@-[^-]*$@@g'`-linux-x64.tar.gz" \
  && mkdir -p /usr/lib/jvm/java-8-oracle \
  && cd /tmp \
  && wget --quiet --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "$URL" \
